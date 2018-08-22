@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pax.sms.common.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.pax.sms.common.domain.User">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="psw_error_times" jdbcType="INTEGER" property="pswErrorTimes" />
+    <result column="is_locked" jdbcType="CHAR" property="isLocked" />
+    <result column="phone_no" jdbcType="VARCHAR" property="phoneNo" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="ext4" jdbcType="VARCHAR" property="ext4" />
+    <result column="ext5" jdbcType="VARCHAR" property="ext5" />
+    <result column="is_active" jdbcType="CHAR" property="isActive" />
+    <result column="is_send_email" jdbcType="CHAR" property="isSendEmail" />
+    <result column="role" jdbcType="CHAR" property="role" />
+  </resultMap>
+
+    <select id="findUserByAccountName" resultMap="BaseResultMap">
+        select * from t_b_user where email = #{accountName}
+  </select>
+
+  <select id="queryNotSendActiveEmailUser" resultMap="BaseResultMap">
+    select user_id ,email from  t_b_user where is_send_email ='1' and is_active='0';
+  </select>
+  <select id="queryRestPswUser" resultMap="BaseResultMap">
+    select user_id ,email from  t_b_user where is_send_email ='1' and is_active='1';
+  </select>
+
+</mapper>

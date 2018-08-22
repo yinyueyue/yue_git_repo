@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pax.sms.busi.dao.CustomerCompanyMapper">
+  <resultMap id="BaseResultMap" type="com.pax.sms.busi.domain.CustomerCompany">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="reg_company_name" jdbcType="VARCHAR" property="regCompanyName" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="contact_number" jdbcType="VARCHAR" property="contactNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="industry" jdbcType="VARCHAR" property="industry" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="ext4" jdbcType="VARCHAR" property="ext4" />
+    <result column="ext5" jdbcType="VARCHAR" property="ext5" />
+  </resultMap>
+  <select id="queryCustomerCompanyList" resultMap="BaseResultMap">
+      select t.* from t_b_customer_company t where 1=1
+      <if test="userId !=null and userId != ''">
+        and t.user_id = #{userId}
+      </if>
+  </select>
+
+</mapper>

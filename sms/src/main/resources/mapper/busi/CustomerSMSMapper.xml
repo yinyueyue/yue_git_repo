@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pax.sms.busi.dao.CustomerSMSMapper">
+    <resultMap id="BaseResultMap" type="com.pax.sms.busi.domain.CustomerSMS">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sms_id" jdbcType="BIGINT" property="smsId"/>
+        <result column="project_name" jdbcType="VARCHAR" property="projectName"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="email_content" jdbcType="VARCHAR" property="emailContent"/>
+        <result column="location" jdbcType="VARCHAR" property="location"/>
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime"/>
+        <result column="send_amount" jdbcType="BIGINT" property="sendAmount"/>
+        <result column="target_popilation" jdbcType="VARCHAR" property="targetPopilation"/>
+        <result column="audit_status" jdbcType="CHAR" property="auditStatus"/>
+        <result column="send_status" jdbcType="CHAR" property="sendStatus"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="actual_send_time" jdbcType="TIMESTAMP" property="actualSendTime"/>
+        <result column="audit_msg" jdbcType="VARCHAR" property="auditMsg"/>
+        <result column="charge_amount" jdbcType="BIGINT" property="chargeAmount"/>
+        <result column="has_send_amount" jdbcType="BIGINT" property="hasSendAmount"/>
+        <result column="arrived_amount" jdbcType="BIGINT" property="arrivedAmount"/>
+        <result column="success_rate" jdbcType="REAL" property="successRate"/>
+        <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
+        <result column="ext1" jdbcType="VARCHAR" property="ext1"/>
+        <result column="ext2" jdbcType="VARCHAR" property="ext2"/>
+        <result column="ext3" jdbcType="VARCHAR" property="ext3"/>
+        <result column="ext4" jdbcType="VARCHAR" property="ext4"/>
+        <result column="ext5" jdbcType="VARCHAR" property="ext5"/>
+        <result column="is_send_email" jdbcType="VARCHAR" property="isSendEmail"/>
+    </resultMap>
+    <resultMap id="SmsCustomerInfo" type="com.pax.sms.busi.model.CustomerSMSResult" extends="BaseResultMap">
+        <result column="reg_company_name" jdbcType="VARCHAR" property="regCompanyName"/>
+        <result column="industry" jdbcType="VARCHAR" property="industry"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+    </resultMap>
+
+    <delete id="deleteByCustomerId">
+       delete from t_b_customer_sms where customer_id = #{customerId}
+  </delete>
+
+    <select id="queryByCustomerId" resultMap="BaseResultMap">
+        select t.* from t_b_customer_sms t where t.customer_id = #{customerId}
+    </select>
+    
+    <select id="querySmsInfo" resultMap="SmsCustomerInfo">
+        select t1.reg_company_name,t1.industry,t.* from t_b_customer_sms t join t_b_customer_company t1 on t.customer_id = t1.customer_id
+        where 1=1
+        <if test="userId !=null and userId !=''">
+            and  t1.user_id = #{userId}
+        </if>
+        <if test="companyName !=null and companyName !=''">
+            and t1.reg_company_name  like concat("%",#{companyName},"%")
+        </if>
+        <if test="projectName !=null and projectName !=''">
+            and t.project_name like concat("%",#{projectName},"%")
+        </if>
+
+        <if test="auditStatus !=null and auditStatus !=''">
+            and t.audit_status = #{auditStatus}
+        </if>
+        order by create_time,audit_status desc
+    </select>
+
+    <select id="queryNotAuditSms" resultMap="SmsCustomerInfo">
+        select t1.reg_company_name,t1.industry,t.* from t_b_customer_sms t join t_b_customer_company t1 on t.customer_id = t1.customer_id
+        where t.audit_status ='1'
+        <if test="companyName !=null and companyName !=''">
+            and t1.reg_company_name  like concat("%",#{companyName},"%")
+        </if>
+        <if test="projectName !=null and projectName !=''">
+            and t.project_name  like concat("%",#{projectName},"%")
+        </if>
+        order by sms_id asc
+    </select>
+
+    <select id="querySmsToSendEmail" resultMap="SmsCustomerInfo">
+          select t1.reg_company_name,t.project_name,t2.email,t.audit_status,t.sms_id from t_b_customer_sms t
+          join t_b_customer_company t1 on t.customer_id = t1.customer_id
+          join t_b_user t2 on t1.user_id = t2.user_id
+          where t.audit_status in ('3','2') and t.is_send_email = '1'
+    </select>
+
+    <select id="queryNotAuditMsg" resultMap="SmsCustomerInfo">
+      select t.* from t_b_customer_sms t join t_b_customer_company t1 on t.customer_id = t1.customer_id
+        where t.audit_status in ('0','2') and t1.user_id=#{userId} limit 1
+    </select>
+
+</mapper>
